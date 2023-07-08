@@ -1,19 +1,28 @@
 const express = require("express");
-const path = require("path");
-
 const app = express();
+const { people } = require("./data");
+//static assest
 
-// setup static and middleware
-app.use(express.static("./public")); // it patched all the file by using single line
+app.use(express.static("./methods-public"));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "./navbar-app/index.html"));
+// Parse Form data
+app.use(express.urlencoded({ extended: false }));
+
+// GET method handling
+app.get("/api/people", (req, res) => {
+  res.status(200).json({ sucess: true, data: people });
 });
 
-app.all("*", (req, res) => {
-  res.status(404).send("Resource not found..");
+//Post method handling
+app.post("/login", (req, res) => {
+  const { name } = req.body;
+
+  if (name) {
+    return res.status(200).send(`Welcome ${name}`);
+  }
+  res.status(401).send("Please Provide Name");
 });
 
 app.listen(5000, () => {
-  console.log("server is listening on port 5000");
+  console.log("app is listening on port 5000");
 });
