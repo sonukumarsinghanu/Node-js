@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
-const { people } = require("./data");
+
+const people = require("./routes/people");
+const auth = require("./routes/auth");
+
 //static assest
 
 app.use(express.static("./methods-public"));
@@ -8,20 +11,13 @@ app.use(express.static("./methods-public"));
 // Parse Form data
 app.use(express.urlencoded({ extended: false }));
 
-// GET method handling
-app.get("/api/people", (req, res) => {
-  res.status(200).json({ sucess: true, data: people });
-});
+app.use(express.json());
+
+app.use("/api/people", people);
 
 //Post method handling
-app.post("/login", (req, res) => {
-  const { name } = req.body;
-
-  if (name) {
-    return res.status(200).send(`Welcome ${name}`);
-  }
-  res.status(401).send("Please Provide Name");
-});
+app.use("/login", auth);
+// GET method handling
 
 app.listen(5000, () => {
   console.log("app is listening on port 5000");
